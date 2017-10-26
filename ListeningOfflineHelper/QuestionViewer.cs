@@ -10,44 +10,98 @@ namespace ListeningOfflineHelper
 {
     class QuestionViewer
     {
-        public XMLPaser parser = new XMLPaser();
-        public async void SectionA()
-        {
-            
-       
+        public XMLPaser XmlParser { get; set; }
 
-            var SoundList = parser.CurrentSectionSounds.ToList();
-            var ChoicesList = parser.SectionsEnumerator.Current.Descendants("choice").ToList();
-            //for (int i = 0; i < 4; i++)
-            //{
-            //    var SoundPath = parser.SourceFolderPath + @"\sound\" + SoundList[i].Attribute("src").Value;
-            //    var SoundDura = int.Parse(SoundList[i].Attribute("duration").Value);
-            //    AudioPlayer.PlayListeningAudio(SoundPath, SoundDura);
-            //    if (i == 1)
-            //    {
-            //        Console.WriteLine(parser.CurrentSectionDirection);
-            //    }
-                
-            //}
-            //开始答题
-            for (int j = 4,k=0;(j < 9 && k<5); j++,k++)
+        public AudioPlayer AudioController { get; set; }
+
+        public QuestionViewer(XMLPaser parserInstance)
+        {
+            XmlParser = parserInstance;
+            AudioController = new AudioPlayer(XmlParser.CurrentSectionSounds.ToList(),XmlParser.SourceFolderPath);
+        }
+        public void ShortConversation(XElement ShortConversationAsset)
+        {
+            var Choice = ShortConversationAsset.Descendants("choice").First();
+            var Sounds = ShortConversationAsset.Descendants("sound").ToList();
+            AudioController.PlayListeningAudio(Sounds[0].Attribute("src").Value, Sounds[0].Attribute("duration").Value);
+            
+            if (Sounds[0].Attribute("src").Value.StartsWith("now"))
             {
-                var SoundPath = parser.SourceFolderPath + @"\sound\" + SoundList[j].Attribute("src").Value;
-                var SoundDura = int.Parse(SoundList[j].Attribute("duration").Value);
-                AudioPlayer.PlayListeningAudio(SoundPath, SoundDura);
-                foreach (var Option in ChoicesList[k].Elements("option"))
+                AudioController.PlayListeningAudio(Sounds[1].Attribute("src").Value, Sounds[1].Attribute("duration").Value);
+                foreach (var Option in Choice.Elements("option"))
                 {
                     Console.WriteLine(Option.Attribute("id").Value + ". " + Option.Value);
                 }
-                //Thread.Sleep(500);
+                
+                AudioController.PlayListeningAudio(Sounds[2].Attribute("src").Value, Sounds[2].Attribute("duration").Value);
+            }
+            else
+            {
+                foreach (var Option in Choice.Elements("option"))
+                {
+                    Console.WriteLine(Option.Attribute("id").Value + ". " + Option.Value);
+                }
+                AudioController.PlayListeningAudio(Sounds[1].Attribute("src").Value, Sounds[1].Attribute("duration").Value);
             }
         }
-
-        public void SectionB()
+        public void LongConversation(XElement LongConversationAsset)
         {
-
+            var Choice = LongConversationAsset.Descendants("choice");
+            var Sounds = LongConversationAsset.Descendants("sound").ToList();
+            var PromptSound = LongConversationAsset.Element("prompt").Elements("sound");
+            var QuestionSound = LongConversationAsset.Descendants("question").Descendants("sound");
+            foreach (var i in PromptSound)
+            {
+                AudioController.PlayListeningAudio(i.Attribute("src").Value, i.Attribute("duration").Value);
+            }
+            foreach (var Option in Choice.Elements("option"))
+            {
+                Console.WriteLine(Option.Attribute("id").Value + ". " + Option.Value);
+            }
+            foreach (var p in QuestionSound)
+            {
+                AudioController.PlayListeningAudio(p.Attribute("src").Value, p.Attribute("duration").Value);
+            }                
         }
 
+        public void SectionA()
+        {
+            var ShortConversationNodes = XmlParser.Sections.Descendants("assessmentItem").Where(x => x.Attribute("type").Value == "shortConversations").ToList();
+            var LongConversationNodes = XmlParser.Sections.Descendants("assessmentItem").Where(x => x.Attribute("type").Value == "longConversations").ToList();
+            //Prepare resources
+            //var ChoicesList = XmlParser.SectionsEnumerator.Current.Descendants("choice").ToList();
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    AudioController.PlayListeningAudio(i);
+            //    if (i == 1)
+            //    {
+            //        Console.WriteLine(XmlParser.CurrentSectionDirection);
+            //    }
+            //}
+            //开始答题 Short Conversations
+            for (var j = 0; j < 5; j++)
+            {
+                ShortConversation(ShortConversationNodes[j]);
+            }
+            //Long Conversations
+            for (int k = 0; k < 2; k++)
+            {
+                LongConversation(LongConversationNodes[k]);
+            }
+            XmlParser.MoveToNextSection(XmlParser.SectionsEnumerator);
+            SectionB();
+        }
+        public void SectionB()
+        {
+            var LongPassageNodes = XmlParser.Sections.Descendants("assessmentItem").Where(x => x.Attribute("type").Value == "listeningPassages").ToList();
+            for (int i = 0; i < 3; i++)
+            {
+                LongConversation(LongPassageNodes[i]);
+            }
+
+            XmlParser.MoveToNextSection(XmlParser.SectionsEnumerator);
+            SectionC();
+        }
         public void SectionC()
         {
 

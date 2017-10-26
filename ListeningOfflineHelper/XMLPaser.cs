@@ -18,7 +18,6 @@ namespace ListeningOfflineHelper
 
         public IEnumerator<XElement> SectionsEnumerator { get; set; }
 
-
         public string CurrentSectionDirection { get; set; }
 
         public IEnumerable<XElement> CurrentSectionSounds { get; set; }
@@ -27,12 +26,12 @@ namespace ListeningOfflineHelper
 
         public XMLPaser()
         {
-        SourceFolderPath = @"D:\xln\paper\";
-        XMLFilePath = SourceFolderPath + "paper.xml";
-        XMLFile = XDocument.Load(XMLFilePath);
-        Sections = XMLFile.Descendants("section");
-        SectionsEnumerator = Sections.GetEnumerator();
-        MoveToNextSection(SectionsEnumerator);
+            SourceFolderPath = @"D:\xln\paper\";
+            XMLFilePath = SourceFolderPath + "paper.xml";
+            XMLFile = XDocument.Load(XMLFilePath);
+            Sections = XMLFile.Descendants("section");
+            SectionsEnumerator = Sections.GetEnumerator();
+            MoveToNextSection(SectionsEnumerator);
         }
 
         public void MoveToNextSection(IEnumerator<XElement> enumerator)

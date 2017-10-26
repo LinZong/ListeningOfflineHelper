@@ -12,7 +12,8 @@ namespace ListeningOfflineHelper
     {
         static void Main(string[] args)
         {
-            QuestionViewer questionViewer = new QuestionViewer();
+            XMLPaser x = new XMLPaser();
+            QuestionViewer questionViewer = new QuestionViewer(x);
             questionViewer.SectionA();
         }
     }
