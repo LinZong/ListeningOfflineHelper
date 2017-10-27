@@ -30,11 +30,11 @@ namespace ListeningOfflineHelper
 
         public void PlayListeningAudio(string FileName, string Duration)
         {
-            //Audio audio = new Audio(SoundFolderPath + FileName);
-            //var dw = int.Parse(Duration);
-            //audio.Play();
-            Console.WriteLine(SoundFolderPath + FileName);
-            //Thread.Sleep(dw * 1000);
+            Audio audio = new Audio(SoundFolderPath + FileName);
+            var dw = int.Parse(Duration);
+            audio.Play();
+            //Console.WriteLine(SoundFolderPath + FileName);
+            Thread.Sleep(dw * 1000);
             //Thread.Sleep(1000);
         }
     }

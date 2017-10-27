@@ -24,9 +24,9 @@ namespace ListeningOfflineHelper
 
         //public IEnumerable<XElement> CurrentSectionassessmentItem { get; set; }
 
-        public XMLPaser()
+        public XMLPaser(string Path)
         {
-            SourceFolderPath = @"D:\xln\paper\";
+            SourceFolderPath = Path;
             XMLFilePath = SourceFolderPath + "paper.xml";
             XMLFile = XDocument.Load(XMLFilePath);
             Sections = XMLFile.Descendants("section");
