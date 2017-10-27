@@ -41,13 +41,9 @@ namespace ListeningOfflineHelper
         public void LongConversation(XElement LongConversationAsset)
         {
             var Choice = LongConversationAsset.Descendants("choice");
-            var BDirection = LongConversationAsset.Parent.Descendants("prompt").First().Elements("sound");
             var PromptSound = LongConversationAsset.Element("prompt").Elements("sound");
             var QuestionSound = LongConversationAsset.Descendants("question").Descendants("sound");
-            foreach (var dire in BDirection)
-            {
-                AudioController.PlayListeningAudio(dire.Attribute("src").Value, dire.Attribute("duration").Value);
-            }
+            
             foreach (var Option in Choice.Elements("option"))
             {
                 Console.WriteLine(Option.Attribute("id").Value + ". " + Option.Value);
@@ -100,6 +96,7 @@ namespace ListeningOfflineHelper
                 LongConversation(LongConversationNode);
             }
             XmlParser.MoveToNextSection(XmlParser.SectionsEnumerator);
+            Console.WriteLine("------------------!!Next Section!!------------------------");
             SectionB();
         }
         public void SectionB()
@@ -110,6 +107,7 @@ namespace ListeningOfflineHelper
                 LongConversation(LongPassageNode);
             }
             XmlParser.MoveToNextSection(XmlParser.SectionsEnumerator);
+            Console.WriteLine("------------------!!Next Section!!------------------------");
             SectionC();
         }
         public void SectionC()
